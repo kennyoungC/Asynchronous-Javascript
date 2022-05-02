@@ -36,35 +36,35 @@ const renderCountry = (data, classes = '') => {
 // };
 
 // CALLBACK HELL
-const getDataCountryAndNeighbour = function (country) {
-  // AJAX call 1
-  const request = new XMLHttpRequest();
-  request.open('GET', 'https://restcountries.com/v2/name/' + country);
-  request.send();
+// const getDataCountryAndNeighbour = function (country) {
+//   // AJAX call 1
+//   const request = new XMLHttpRequest();
+//   request.open('GET', 'https://restcountries.com/v2/name/' + country);
+//   request.send();
 
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
-    console.log(data);
-    // render country 1
-    renderCountry(data);
+//   request.addEventListener('load', function () {
+//     const [data] = JSON.parse(this.responseText);
+//     console.log(data);
+//     // render country 1
+//     renderCountry(data);
 
-    // Get neighbour country (2)
-    const neighbour = data.borders?.[0];
-    // if(!neighbour) return
+//     // Get neighbour country (2)
+//     const neighbour = data.borders?.[0];
+//     // if(!neighbour) return
 
-    // AJAX call country (2)
-    const request2 = new XMLHttpRequest();
-    request2.open('GET', 'https://restcountries.com/v2/alpha/' + neighbour);
-    request2.send();
-    request2.addEventListener('load', function () {
-      const data2 = JSON.parse(this.responseText);
-      console.log(data2);
-      renderCountry(data2, 'neighbour');
-    });
-  });
-};
+//     // AJAX call country (2)
+//     const request2 = new XMLHttpRequest();
+//     request2.open('GET', 'https://restcountries.com/v2/alpha/' + neighbour);
+//     request2.send();
+//     request2.addEventListener('load', function () {
+//       const data2 = JSON.parse(this.responseText);
+//       console.log(data2);
+//       renderCountry(data2, 'neighbour');
+//     });
+//   });
+// };
 
-getDataCountryAndNeighbour('usa');
+// getDataCountryAndNeighbour('usa');
 // getDataCountryAndNeighbour('lithuania');
 // Another example of Callback hell
 // setTimeout(() => {
@@ -85,3 +85,17 @@ getDataCountryAndNeighbour('usa');
 //     }, 1000);
 //   }, 1000);
 // }, 1000);
+
+const getCountry = function (country) {
+  fetch('https://restcountries.com/v2/name/' + country)
+    .then(response => response.json())
+    .then(([data]) => {
+      renderCountry(data);
+      const neighbour = data.borders?.[0];
+      return fetch('https://restcountries.com/v2/alpha/' + neighbour);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'));
+};
+
+getCountry('germany');
