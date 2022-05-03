@@ -386,3 +386,27 @@ const get3Country = async (c1, c2, c3) => {
   }
 };
 get3Country('portugal', 'spain', 'germany');
+
+// Promise.race
+(async () => {
+  try {
+    const resp = await Promise.race([
+      getJSON(`https://restcountries.com/v2/name/italy`),
+      getJSON(`https://restcountries.com/v2/name/usa`),
+      getJSON(`https://restcountries.com/v2/name/ghana`),
+    ]);
+    console.log(resp[0]);
+  } catch (error) {
+    console.error(error);
+  }
+})();
+const timeout = sec => {
+  return new Promise(function (_, reject) {
+    setTimeout(() => {
+      reject(new Error('Request took too long'));
+    }, sec * 1000);
+  });
+};
+Promise.race([timeout(2), getJSON(`https://restcountries.com/v2/name/togo`)])
+  .then(resp => console.log(resp))
+  .catch(err => console.log(err));
